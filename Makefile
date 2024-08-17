@@ -7,7 +7,7 @@ garena:
 tests: garena
 	$(CC) $(CFLAGS) test.c garena.o -o tests
 
-debug: CFLAGS += -O0 -g -fsanatize=undefined
+debug: CFLAGS += -DGARENA_DEBUG -O0 -g -fsanitize=undefined
 debug: garena
 
 release: CFLAGS += -O3 -Werror -Wall -Wextra

@@ -21,20 +21,20 @@ _Static_assert(__STDC_VERSION__ >= 201112L,
 
 // Debug utilities
 #ifdef GARENA_DEBUG
-    static int ERR_OUT = stderr;
+
+    #include <stdio.h>
+    #include <stdarg.h>
 
     void dbg_printf(const char *format, ...)
     {
             va_list args;
             va_start(args, format);
-            fprintf(ERR_STDOUT, format, args);
+            fprintf(stderr, format, args);
             va_end(args);
     }
 
-    void dbg_set_out(int out) { ERR_OUT = out; }
 #else
     void dbg_printf(const char *format, ...) { (void) format; }
-    void dbg_set_out(int out)                { (void) out; }
 #endif
 
 
