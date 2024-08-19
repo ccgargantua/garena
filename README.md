@@ -6,7 +6,7 @@ Arena allocator written in C11, written to compliment to my similar [C89 arena a
 ---
 
 ## Usage
-Consult commends above function declarations.
+Consult comments above function declarations.
 
 ## License
 This software is licensed under Apache License 2.0
