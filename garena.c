@@ -14,11 +14,6 @@
 
 
 
-_Static_assert(__STDC_VERSION__ >= 201112L,
-               "Must compile for C11 or above");
-
-
-
 // Debug utilities
 #ifdef GARENA_DEBUG
 
