@@ -17,6 +17,8 @@ void test_arena_create()
 void test_arena_alloc()
 {
     Arena *arena = arena_create(1024);
+
+    __attribute__((unused))
     char *bytes = arena_alloc(arena, 256);
     TEST_EQUAL(arena->end - arena->begin, 1024 - 256);
     TEST_EQUAL(arena->end - arena->begin, 1024 - 256);

@@ -2,42 +2,14 @@
 
 
 #include <stdlib.h>
-
-
-
-#ifndef GARENA_TEST
-    #include <assert.h>
-#else
-    #define GARENA_DEBUG
-    #define assert(cond)
-#endif
-
-
-
-// Debug utilities
-#ifdef GARENA_DEBUG
-
-    #include <stdio.h>
-    #include <stdarg.h>
-
-    void dbg_printf(const char *format, ...)
-    {
-            va_list args;
-            va_start(args, format);
-            fprintf(stderr, format, args);
-            va_end(args);
-    }
-
-#else
-    void dbg_printf(const char *format, ...) { (void) format; }
-#endif
+#include <assert.h>
 
 
 
 // Primarily used for assertions of bounds
 static inline ptrdiff_t ptr_diff(void *p1, void *p2)
 {
-    return (uintptr_t)p1 - (uintptr_t)p2;
+    return (ptrdiff_t)p1 - (ptrdiff_t)p2;
 }
 
 
@@ -58,6 +30,8 @@ void garena_set_dealloc( void (*deallocator)(void *))
     dealloc = deallocator;
 }
 
+
+
 // this should typically be platform's word alignment
 static unsigned int default_alignment = _Alignof(void *);
 
@@ -66,7 +40,6 @@ void garena_set_default_alignment(unsigned int align)
     assert( (align & (align - 1)) == 0 ); // assert alignment is power of 2
     default_alignment = align;
 }
-
 
 
 
@@ -86,10 +59,12 @@ Arena *arena_create(size_t size)
 }
 
 
+
 void *arena_alloc(Arena *arena, size_t size)
 {
     return arena_alloc_aligned(arena, size, default_alignment);
 }
+
 
 
 void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int align)
@@ -104,6 +79,15 @@ void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int align)
 
     return arena->end;
 }
+
+
+
+void arena_clear(Arena *arena)
+{
+    assert(arena);
+    arena->end = arena->begin;
+}
+
 
 
 void arena_destroy(Arena *arena)

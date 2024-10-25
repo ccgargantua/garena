@@ -40,10 +40,10 @@ char buffer[BUFFER_SIZE];
 int buffer_index = 0;
 
 
-#define REPORT(msg)                                        \
-    buffer_index += snprintf(buffer + buffer_index,        \
-                             BUFFER_SIZE - buffer_index,   \
-                             "  FAILURE: '%s' at %s:%d\n", \
+#define REPORT(msg)                                                      \
+    buffer_index += snprintf(buffer + buffer_index,                      \
+                             (unsigned int)(BUFFER_SIZE - buffer_index), \
+                             "  FAILURE: '%s' at %s:%d\n",               \
                              msg, __FILE__, __LINE__)
 
 
