@@ -8,5 +8,7 @@ Arena allocator written in C11, written to compliment to my similar [C89 arena a
 ## Usage
 Consult comments above function declarations.
 
+Simply build the object file and link it in your own project. I recommend copying the source over to your project source.
+
 ## License
 This software is licensed under Apache License 2.0
