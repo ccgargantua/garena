@@ -5,7 +5,6 @@
 #include <assert.h>
 
 
-
 // Primarily used for assertions of bounds
 static inline ptrdiff_t ptr_diff(void *p1, void *p2)
 {
@@ -13,10 +12,10 @@ static inline ptrdiff_t ptr_diff(void *p1, void *p2)
 }
 
 
-
 // Internal allocation/deallocation
 static void * (*alloc)(size_t size) = malloc;
 static void (*dealloc)(void *)      = free;
+
 
 void garena_set_alloc( void * (*allocator)(size_t size) )
 {
@@ -31,7 +30,6 @@ void garena_set_dealloc( void (*deallocator)(void *))
 }
 
 
-
 // this should typically be platform's word alignment
 static unsigned int default_alignment = _Alignof(void *);
 
@@ -40,7 +38,6 @@ void garena_set_default_alignment(unsigned int align)
     assert( (align & (align - 1)) == 0 ); // assert alignment is power of 2
     default_alignment = align;
 }
-
 
 
 Arena *arena_create(size_t size)
@@ -59,12 +56,10 @@ Arena *arena_create(size_t size)
 }
 
 
-
 void *arena_alloc(Arena *arena, size_t size)
 {
     return arena_alloc_aligned(arena, size, default_alignment);
 }
-
 
 
 void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int align)
@@ -81,13 +76,11 @@ void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int align)
 }
 
 
-
 void arena_clear(Arena *arena)
 {
     assert(arena);
     arena->end = arena->begin;
 }
-
 
 
 void arena_destroy(Arena *arena)
