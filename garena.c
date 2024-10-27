@@ -76,13 +76,6 @@ void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int align)
 }
 
 
-void arena_clear(Arena *arena)
-{
-    assert(arena);
-    arena->end = arena->begin;
-}
-
-
 void arena_destroy(Arena *arena)
 {
     assert(arena);

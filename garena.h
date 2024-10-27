@@ -42,9 +42,6 @@ void *arena_alloc(Arena *arena, size_t size);
 // alignment must be power of 2.
 void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int alignment);
 
-// Reset arena pointers, keep memory allocated.
-void arena_clear(Arena *arena);
-
 // Deallocate memory associated with arena.
 void arena_destroy(Arena *arena);
 
