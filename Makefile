@@ -7,6 +7,9 @@ tests: CC = gcc
 tests: garena
 	$(CC) $(CFLAGS) test.c garena.o -o tests
 
+test: tests
+	./tests
+
 debug: CFLAGS += -DGARENA_DEBUG -Og -g
 debug: garena
 
