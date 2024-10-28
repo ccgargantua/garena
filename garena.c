@@ -8,7 +8,7 @@
 // Primarily used for assertions of bounds
 static inline ptrdiff_t ptr_diff(void *p1, void *p2)
 {
-    return (ptrdiff_t)p1 - (ptrdiff_t)p2;
+    return (char *)p1 - (char *)p2;
 }
 
 
@@ -69,8 +69,12 @@ void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int align)
 
     arena->end -= size;                            // unaligned
 
-    arena->end += (uintptr_t)(arena->end) % align; // TODO get fancy here
-    assert( ptr_diff(arena->end, arena->begin) > 0 );
+    assert(
+        ptr_diff(
+            arena->end - (uintptr_t)(arena->end) % align,
+            arena->begin)
+        > 0 );
+    arena->end -= (uintptr_t)(arena->end) % align; // TODO get fancy here
 
     return arena->end;
 }

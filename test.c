@@ -42,7 +42,7 @@ void test_arena_alloc_aligned()
     Arena *arena = arena_create(1024);
     char *alloc1 = arena_alloc_aligned(arena, 6, 4);
     char *alloc2 = arena_alloc_aligned(arena, 1, 4);
-    TEST_EQUAL(alloc2, alloc1 + 2);
+    TEST_EQUAL(alloc2, alloc1 - 4);
     arena_destroy(arena);
 
 }
