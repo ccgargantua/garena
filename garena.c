@@ -2,6 +2,8 @@
 
 
 #include <stdlib.h>
+#include <stdalign.h>
+#include <stddef.h>
 #include <assert.h>
 
 
@@ -31,11 +33,13 @@ void garena_set_dealloc( void (*deallocator)(void *))
 
 
 // this should typically be platform's word alignment
-static unsigned int default_alignment = _Alignof(void *);
+static unsigned int default_alignment = alignof(max_align_t);
 
 void garena_set_default_alignment(unsigned int align)
 {
-    assert( (align & (align - 1)) == 0 ); // assert alignment is power of 2
+    assert(
+        align
+        && (align & (align - 1)) == 0 );
     default_alignment = align;
 }
 
@@ -65,17 +69,20 @@ void *arena_alloc(Arena *arena, size_t size)
 void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int align)
 {
     assert(arena);
-    assert( (align & (align - 1)) == 0 );          // assert align is power of 2
-
-    arena->end -= size;                            // unaligned
-
     assert(
-        ptr_diff(
-            arena->end - (uintptr_t)(arena->end) % align,
-            arena->begin)
-        > 0 );
-    arena->end -= (uintptr_t)(arena->end) % align; // TODO get fancy here
+        align
+        && (align & (align - 1)) == 0 );
 
+    ptrdiff_t available = ptr_diff(arena->end, arena->begin);
+    assert(available >= 0);
+
+    ptrdiff_t padding   = (ptrdiff_t)arena->end & (align - 1);
+
+    assert(size <= PTRDIFF_MAX);
+    assert((ptrdiff_t)size <= available - padding);
+
+    // Now allocate it from the arena
+    arena->end -= (ptrdiff_t)size + padding;
     return arena->end;
 }
 
