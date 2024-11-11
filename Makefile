@@ -1,4 +1,4 @@
-CFLAGS = -std=c11 -Wall -Wextra -Wshadow -Wpedantic -Wconversion -fanalyzer -fsanitize=undefined
+CFLAGS = -std=c2x -Wall -Wextra -Wshadow -Wpedantic -Wconversion -fanalyzer -fsanitize=undefined
 
 garena:
 	$(CC) $(CFLAGS) garena.c -c -o garena.o
