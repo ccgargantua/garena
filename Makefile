@@ -12,12 +12,6 @@ tests: garena.o test.o
 test: tests
 	./tests
 
-debug: CFLAGS += -DGARENA_DEBUG -Og -g
-debug: garena
-
-release: CFLAGS += -O3 -Werror -Wall -Wextra
-release: garena
-
 clean:
 	rm -f garena.o
 	rm -f tests
