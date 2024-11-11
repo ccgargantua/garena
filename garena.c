@@ -261,17 +261,15 @@ Arena *arena_create(size_t size)
 
 void *arena_alloc(Arena *arena, size_t num, size_t size)
 {
-    unsigned int align = _Generic((size), \
-        bool:      alignof(bool), \
-        char:      alignof(char), \
-        short:     alignof(short), \
-        int:       alignof(int), \
-        long:      alignof(long), \
-        long long: alignof(long long), \
-        float:     alignof(float), \
-        double:    alignof(double), \
-        default:   alignof(max_align_t) \
-    );
+    unsigned int align = default_alignment;
+    if      (size == sizeof(bool))      align = alignof(bool);
+    else if (size == sizeof(char))      align = alignof(char);
+    else if (size == sizeof(short))     align = alignof(short);
+    else if (size == sizeof(int))       align = alignof(int);
+    else if (size == sizeof(long))      align = alignof(long);
+    else if (size == sizeof(long long)) align = alignof(long long);
+    else if (size == sizeof(float))     align = alignof(float);
+    else if (size == sizeof(double))    align = alignof(double);
 
     return arena_alloc_aligned(arena, num, size, align);
 }
