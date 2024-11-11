@@ -1,11 +1,13 @@
-CFLAGS = -std=c2x -Wall -Wextra -Wshadow -Wpedantic -Wconversion -fanalyzer -fsanitize=undefined
+CFLAGS = -std=c2x \
+		 -g -Og \
+		 -Wall -Wextra -Wshadow -Wpedantic -Wconversion \
+		 -fanalyzer -fsanitize=undefined
 
-garena:
-	$(CC) $(CFLAGS) garena.c -c -o garena.o
+all: tests
 
 tests: CC = gcc
-tests: garena
-	$(CC) $(CFLAGS) test.c garena.o -o tests
+tests: garena.o test.o
+	$(CC) $(CFLAGS) test.o garena.o -o tests
 
 test: tests
 	./tests
