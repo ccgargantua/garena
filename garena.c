@@ -60,13 +60,32 @@ Arena *arena_create(size_t size)
 }
 
 
-void *arena_alloc(Arena *arena, size_t size)
+void *arena_alloc(Arena *arena, size_t num, size_t size)
 {
-    return arena_alloc_aligned(arena, size, default_alignment);
+    unsigned int align = default_alignment;
+
+    if (size == sizeof(bool))
+        align = alignof(bool);
+    else if (size == sizeof(char))
+        align = alignof(char);
+    else if (size == sizeof(short))
+        align = alignof(short);
+    else if (size == sizeof(int))
+        align = alignof(int);
+    else if (size == sizeof(long))
+        align = alignof(long);
+    else if (size == sizeof(long long))
+        align = alignof(long long);
+    else if (size == sizeof(float))
+        align = alignof(float);
+    else if (size == sizeof(double))
+        align = alignof(double);
+
+    return arena_alloc_aligned(arena, num, size, align);
 }
 
 
-void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int align)
+void *arena_alloc_aligned(Arena *arena, size_t num, size_t size, unsigned int align)
 {
     assert(arena);
     assert(
@@ -78,11 +97,11 @@ void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int align)
 
     ptrdiff_t padding   = (ptrdiff_t)arena->end & (align - 1);
 
-    assert(size <= PTRDIFF_MAX);
-    assert((ptrdiff_t)size <= available - padding);
+    assert((size * num) <= PTRDIFF_MAX);
+    assert((ptrdiff_t)(size * num) <= available - padding);
 
     // Now allocate it from the arena
-    arena->end -= (ptrdiff_t)size + padding;
+    arena->end -= (ptrdiff_t)(size * num) + padding;
     return arena->end;
 }
 

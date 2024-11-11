@@ -36,11 +36,11 @@ void arena_set_default_alignment(unsigned int align);
 Arena *arena_create(size_t size);
 
 // Allocate memory within the arena
-void *arena_alloc(Arena *arena, size_t size);
+void *arena_alloc(Arena *arena, size_t num, size_t size);
 
 // allocate within the arena with a specific alignment.
 // alignment must be power of 2.
-void *arena_alloc_aligned(Arena *arena, size_t size, unsigned int alignment);
+void *arena_alloc_aligned(Arena *arena, size_t num, size_t size, unsigned int alignment);
 
 // Deallocate memory associated with arena.
 void arena_destroy(Arena *arena);
