@@ -16,4 +16,4 @@ clean:
 	rm -f garena.o
 	rm -f tests
 
-.PHONY: garena tests debug release
+.PHONY: garena tests
