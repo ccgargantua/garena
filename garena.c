@@ -313,3 +313,5 @@ void arena_destroy(Arena *arena)
     dealloc(arena->begin);
     dealloc(arena);
 }
+
+#undef ASSERT
