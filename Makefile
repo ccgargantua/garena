@@ -14,7 +14,7 @@ test: silent-all
 	./tests
 
 clean:
-	rm -f garena.o
+	rm -f *.o
 	rm -f tests
 
 .PHONY: all clean test silent-all
