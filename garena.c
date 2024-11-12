@@ -190,12 +190,15 @@
 // limitations under the License.
 
 
+
 #include "garena.h"
+
 
 
 #include <stdlib.h>
 #include <stdalign.h>
 #include <stddef.h>
+
 
 
 #ifdef __GNUC__
@@ -207,6 +210,7 @@
     #define EXPECT_TRUE(exp)  (exp)
     #define EXPECT_FALSE(exp) (!(exp))
 #endif
+
 
 
 #ifdef GARENA_DEBUG
@@ -229,6 +233,7 @@
     #define assert(exp, msg) ((void)(0))
 
 #endif
+
 
 
 // Primarily used for assertions of bounds
