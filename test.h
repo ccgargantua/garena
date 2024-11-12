@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stddef.h>
 
 
 int passed_tests = 0;
@@ -35,7 +36,7 @@ int temp_passed;
 int temp_total;
 
 
-#define BUFFER_SIZE 4096
+constexpr size_t BUFFER_SIZE = 4096;
 char buffer[BUFFER_SIZE];
 int buffer_index = 0;
 
