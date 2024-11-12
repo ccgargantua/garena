@@ -54,8 +54,7 @@ void test_arena_alloc_aligned()
 
     Arena *arena = arena_create(arena_size);
 
-    __attribute__((unused))
-        char *alloc1 = arena_alloc_aligned(arena, allocation1, 1, alignment);
+    char *alloc1 = arena_alloc_aligned(arena, allocation1, 1, alignment);
     char *alloc2 = arena_alloc_aligned(arena, allocation2, 1, alignment);
     TEST_EQUAL(alloc2, alloc1 - expected_offset);
 
