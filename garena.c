@@ -230,6 +230,7 @@
 
 #endif
 
+
 // Primarily used for assertions of bounds
 ALWAYS_INLINE
 static inline ptrdiff_t ptr_diff(void *p1, void *p2)
