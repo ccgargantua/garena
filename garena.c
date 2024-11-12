@@ -198,6 +198,13 @@
 #include <stddef.h>
 
 
+#ifdef __GNUC__
+    #define ALWAYS_INLINE __attribute__((always_inline))
+#else
+    #define ALWAYS_INLINE
+#endif
+
+
 #ifdef GARENA_DEBUG
 
     #ifdef __GNUC__
@@ -215,18 +222,16 @@
             } \
         } while(0)
 
-        // #define ASSERT(exp) assert( __builtin_expect( !!(exp), 1 ) )
-        #define ALWAYS_INLINE __attribute__((always_inline))
     #else
+
         #include <assert.h>
         #define ASSERT(exp, msg) assert(exp)
-        #define ALWAYS_INLINE
+
     #endif
 
 #else
 
     #define ASSERT(exp, msg) ((void)(0))
-    #define ALWAYS_INLINE
 
 #endif
 
