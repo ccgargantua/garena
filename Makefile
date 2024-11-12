@@ -1,19 +1,20 @@
-CFLAGS = -std=c2x \
-		 -g -Og \
-		 -Wall -Wextra -Wshadow -Wpedantic -Wconversion \
-		 -fanalyzer -fsanitize=undefined
+CC     := gcc
+CFLAGS := -std=c2x \
+		  -g -Og -DGARENA_DEBUG \
+		  -Werror -Wall -Wextra -Wshadow -Wpedantic -Wconversion \
+		  -fanalyzer -fsanitize=undefined
 
-all: tests
-
-tests: CC = gcc
-tests: garena.o test.o
+all: garena.o test.o
 	$(CC) $(CFLAGS) test.o garena.o -o tests
 
-test: tests
+silent-all:
+	@$(MAKE) all > /dev/null 2>&1
+
+test: silent-all
 	./tests
 
 clean:
 	rm -f garena.o
 	rm -f tests
 
-.PHONY: garena tests
+.PHONY: all clean test silent-all
