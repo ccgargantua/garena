@@ -199,35 +199,30 @@
 
 
 #ifdef __GNUC__
-    #define ALWAYS_INLINE __attribute__((always_inline))
+    #define ALWAYS_INLINE     __attribute__((always_inline))
+    #define EXPECT_TRUE(exp)  __builtin_expect( !!(exp),  1 )
+    #define EXPECT_FALSE(exp) __builtin_expect( !!(exp), 0 )
 #else
     #define ALWAYS_INLINE
+    #define EXPECT_TRUE(exp)  (exp)
+    #define EXPECT_FALSE(exp) (!(exp))
 #endif
 
 
 #ifdef GARENA_DEBUG
 
-    #ifdef __GNUC__
+    #include <stdio.h>
 
-        #include <stdio.h>
-
-        #define ASSERT(exp, msg) \
-        do { \
-            if ( __builtin_expect( !(exp), 0) ) { \
-                fprintf( \
-                    stderr, \
-                    "FAILED ASSERTION (%s) -> (%d) :\n    `%s` at %s:%d\n", \
-                    #exp, !!(exp), msg, __FILE__, __LINE__); \
-                exit(1); \
-            } \
-        } while(0)
-
-    #else
-
-        #include <assert.h>
-        #define ASSERT(exp, msg) assert(exp)
-
-    #endif
+    #define ASSERT(exp, msg) \
+    do { \
+            if ( EXPECT_FALSE(!(exp)) ) { \
+            fprintf( \
+                stderr, \
+                "FAILED ASSERTION (%s) -> (%d) :\n    `%s` at %s:%d\n", \
+                #exp, !!(exp), msg, __FILE__, __LINE__); \
+            exit(1); \
+        } \
+    } while(0)
 
 #else
 
@@ -341,3 +336,5 @@ void arena_destroy(Arena *arena)
 
 #undef ASSERT
 #undef ALWAYS_INLINE
+#undef EXPECT_TRUE
+#undef EXPECT_FALSE
