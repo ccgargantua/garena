@@ -36,7 +36,7 @@ int temp_passed;
 int temp_total;
 
 
-constexpr size_t BUFFER_SIZE = 4096;
+constexpr int BUFFER_SIZE = 4096;
 char buffer[BUFFER_SIZE];
 int buffer_index = 0;
 
