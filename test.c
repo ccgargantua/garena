@@ -11,7 +11,11 @@ void test_arena_create()
     constexpr size_t arena_size = 1024;
 
     Arena *arena = arena_create(arena_size);
+
+
     TEST_EQUAL(arena->end - arena->begin, arena_size);
+
+
     arena_destroy(arena);
 }
 
@@ -28,6 +32,7 @@ void test_arena_alloc()
 
     char *bytes = arena_alloc(arena, num_bytes, 1);
 
+
     TEST_EQUAL(
         (ptrdiff_t)(arena->end - arena->begin),
         (ptrdiff_t)(arena_size - num_bytes));
@@ -35,13 +40,17 @@ void test_arena_alloc()
 
     int *more_data = arena_alloc(arena, num_more_bytes, sizeof(int));
 
+
     TEST_EQUAL(
         (ptrdiff_t)(arena->end - arena->begin),
         expected_offset);
 
+
     TEST_EQUAL(
         bytes - (char *)more_data,
         num_bytes - num_bytes % sizeof(int));
+
+
     arena_destroy(arena);
 }
 
@@ -59,6 +68,8 @@ void test_arena_alloc_aligned()
 
     char *alloc1 = arena_alloc_aligned(arena, allocation1, 1, alignment);
     char *alloc2 = arena_alloc_aligned(arena, allocation2, 1, alignment);
+
+
     TEST_EQUAL(alloc2, alloc1 - expected_offset);
 
     arena_destroy(arena);
