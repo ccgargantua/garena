@@ -206,11 +206,11 @@
 
         #define ASSERT(exp, msg) \
         do { \
-            if ( !(exp) ) { \
+            if ( __builtin_expect( !(exp), 0) ) { \
                 fprintf( \
                     stderr, \
-                    "FAILED ASSERTION (%s):\n    `%s` at %s:%d\n", \
-                    #exp, msg, __FILE__, __LINE__); \
+                    "FAILED ASSERTION (%s) -> (%d) :\n    `%s` at %s:%d\n", \
+                    #exp, !!(exp), msg, __FILE__, __LINE__); \
                 exit(1); \
             } \
         } while(0)
