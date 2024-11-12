@@ -18,9 +18,11 @@ void test_arena_create()
 
 void test_arena_alloc()
 {
-    constexpr size_t arena_size     = 1024;
-    constexpr size_t num_bytes      = 256;
-    constexpr size_t num_more_bytes = 64;
+    constexpr size_t arena_size         = 1024;
+    constexpr size_t num_bytes          = 256;
+    constexpr size_t num_more_bytes     = 64;
+
+    constexpr ptrdiff_t expected_offset = (arena_size - (num_more_bytes * sizeof(int) + num_bytes));
 
     Arena *arena = arena_create(arena_size);
 
@@ -35,7 +37,7 @@ void test_arena_alloc()
 
     TEST_EQUAL(
         (ptrdiff_t)(arena->end - arena->begin),
-        (ptrdiff_t)(arena_size - (num_more_bytes * sizeof(int) + num_bytes)));
+        expected_offset);
 
     TEST_EQUAL(
         bytes - (char *)more_data,
@@ -50,6 +52,7 @@ void test_arena_alloc_aligned()
     constexpr size_t allocation1        = 6;
     constexpr size_t allocation2        = 1;
     constexpr unsigned int alignment    = 4;
+
     constexpr ptrdiff_t expected_offset = alignof(size_t) % allocation1 + allocation2;
 
     Arena *arena = arena_create(arena_size);
