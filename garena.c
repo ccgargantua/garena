@@ -244,6 +244,7 @@ static inline ptrdiff_t ptr_diff(void *p1, void *p2)
 }
 
 
+
 // Internal allocation/deallocation
 static void * (*alloc)(size_t size) = malloc;
 static void (*dealloc)(void *)      = free;
@@ -255,11 +256,13 @@ void garena_set_alloc( void * (*allocator)(size_t size) )
     alloc = allocator;
 }
 
+
 void garena_set_dealloc( void (*deallocator)(void *))
 {
     assert(deallocator, "Deallocator is NULL");
     dealloc = deallocator;
 }
+
 
 
 // this should typically be platform's word alignment
