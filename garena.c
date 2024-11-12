@@ -196,17 +196,42 @@
 #include <stdlib.h>
 #include <stdalign.h>
 #include <stddef.h>
-#include <assert.h>
 
 
-#ifdef __GNUC__
-    #define ASSERT(exp) assert( __builtin_expect( !!(exp), 1 ) )
+#ifdef GARENA_DEBUG
+
+    #ifdef __GNUC__
+
+        #include <stdio.h>
+
+        #define ASSERT(exp, msg) \
+        do { \
+            if ( !(exp) ) { \
+                fprintf( \
+                    stderr, \
+                    "FAILED ASSERTION (%s):\n    `%s` at %s:%d\n", \
+                    #exp, msg, __FILE__, __LINE__); \
+                exit(1); \
+            } \
+        } while(0)
+
+        // #define ASSERT(exp) assert( __builtin_expect( !!(exp), 1 ) )
+        #define ALWAYS_INLINE __attribute__((always_inline))
+    #else
+        #include <assert.h>
+        #define ASSERT(exp, msg) assert(exp)
+        #define ALWAYS_INLINE
+    #endif
+
 #else
-    #define ASSERT assert
+
+    #define ASSERT(exp, msg) ((void)(0))
+    #define ALWAYS_INLINE
+
 #endif
 
-
 // Primarily used for assertions of bounds
+ALWAYS_INLINE
 static inline ptrdiff_t ptr_diff(void *p1, void *p2)
 {
     return (char *)p1 - (char *)p2;
@@ -220,13 +245,13 @@ static void (*dealloc)(void *)      = free;
 
 void garena_set_alloc( void * (*allocator)(size_t size) )
 {
-    ASSERT(allocator);
+    ASSERT (allocator, "Allocator provided is NULL");
     alloc = allocator;
 }
 
 void garena_set_dealloc( void (*deallocator)(void *))
 {
-    ASSERT(deallocator);
+    ASSERT (deallocator, "Deallocator is NULL");
     dealloc = deallocator;
 }
 
@@ -236,22 +261,22 @@ static unsigned int default_alignment = alignof(max_align_t);
 
 void garena_set_default_alignment(unsigned int align)
 {
-    ASSERT(
-        align
-        && (align & (align - 1)) == 0 );
+    ASSERT (
+        align && (align & (align - 1)) == 0,
+        "Provided alignment is not power of 2");
     default_alignment = align;
 }
 
 
 Arena *arena_create(size_t size)
 {
-    ASSERT(size > 0);
+    ASSERT (size > 0, "Provided size is not > 0");
 
     Arena *arena = alloc(sizeof(Arena));
-    ASSERT(arena);
+    ASSERT (arena, "Arean object allocation failed.");
 
     arena->begin = alloc(size);
-    ASSERT(arena->begin);
+    ASSERT (arena->begin, "Arena region allocation failed.");
 
     arena->end = arena->begin + size;
 
@@ -261,6 +286,8 @@ Arena *arena_create(size_t size)
 
 void *arena_alloc(Arena *arena, size_t num, size_t size)
 {
+    ASSERT (arena, "Provided arena is null");
+
     unsigned int align = default_alignment;
     if      (size == sizeof(bool))      align = alignof(bool);
     else if (size == sizeof(char))      align = alignof(char);
@@ -277,20 +304,23 @@ void *arena_alloc(Arena *arena, size_t num, size_t size)
 
 void *arena_alloc_aligned(Arena *arena, size_t num, size_t size, unsigned int align)
 {
-    ASSERT(arena);
-    ASSERT(
-        align
-        && (align & (align - 1)) == 0 );
+    ASSERT (arena, "Provided arena is null");
+    ASSERT (
+        align && (align & (align - 1)) == 0,
+        "Provided alignment is not power of 2");
 
-    ptrdiff_t available = ptr_diff(arena->end, arena->begin);
-    ASSERT(available >= 0);
+    #ifndef GARENA_DEBUG
+    __attribute__((unused))
+    #endif
+        ptrdiff_t available = ptr_diff(arena->end, arena->begin);
+
+    ASSERT (available >= 0, "Not enough space in arena.");
 
     ptrdiff_t padding   = (ptrdiff_t)arena->end & (align - 1);
 
-    ASSERT((size * num) <= PTRDIFF_MAX);
-    ASSERT((ptrdiff_t)(size * num) <= available - padding);
+    ASSERT ((size * num) <= PTRDIFF_MAX, "Allocation size results in overflow.");
+    ASSERT ((ptrdiff_t)(size * num) <= available - padding, "Not enough space in arena.");
 
-    // Now allocate it from the arena
     arena->end -= (ptrdiff_t)(size * num) + padding;
     return arena->end;
 }
@@ -298,10 +328,11 @@ void *arena_alloc_aligned(Arena *arena, size_t num, size_t size, unsigned int al
 
 void arena_destroy(Arena *arena)
 {
-    ASSERT(arena);
+    ASSERT (arena, "Provided arena is null");
     dealloc(arena->begin);
     dealloc(arena);
 }
 
 
 #undef ASSERT
+#undef ALWAYS_INLINE
