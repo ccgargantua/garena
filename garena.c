@@ -202,13 +202,13 @@
 
 
 #ifdef __GNUC__
-    #define ALWAYS_INLINE     __attribute__((always_inline))
-    #define EXPECT_TRUE(exp)  __builtin_expect( !!(exp),  1 )
-    #define EXPECT_FALSE(exp) __builtin_expect( !!(exp), 0 )
+    #define ALWAYS_INLINE_     __attribute__((always_inline))
+    #define EXPECT_TRUE_(exp)  __builtin_expect( !!(exp),  1 )
+    #define EXPECT_FALSE_(exp) __builtin_expect( !!(exp), 0 )
 #else
-    #define ALWAYS_INLINE
-    #define EXPECT_TRUE(exp)  (exp)
-    #define EXPECT_FALSE(exp) (!(exp))
+    #define ALWAYS_INLINE_
+    #define EXPECT_TRUE_(exp)  (exp)
+    #define EXPECT_FALSE_(exp) (!(exp))
 #endif
 
 
@@ -219,7 +219,7 @@
 
     #define assert(exp, msg) \
     do { \
-            if ( EXPECT_FALSE(!(exp)) ) { \
+            if ( EXPECT_FALSE_(!(exp)) ) { \
             fprintf( \
                 stderr, \
                 "FAILED ASSERTION (%s) -> (%d) :\n    `%s` at %s:%d\n", \
@@ -237,7 +237,7 @@
 
 
 // Primarily used for assertions of bounds
-ALWAYS_INLINE
+ALWAYS_INLINE_
 static inline ptrdiff_t ptr_diff(void *p1, void *p2)
 {
     return (char *)p1 - (char *)p2;
@@ -341,6 +341,6 @@ void arena_destroy(Arena *arena)
 
 
 #undef ASSERT
-#undef ALWAYS_INLINE
-#undef EXPECT_TRUE
-#undef EXPECT_FALSE
+#undef ALWAYS_INLINE_
+#undef EXPECT_TRUE_
+#undef EXPECT_FALSE_
