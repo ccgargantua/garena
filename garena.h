@@ -208,17 +208,17 @@ typedef struct
 // Internal alloc/dealloc
 
 // Set the malloc-like allocator for internal use
-void arena_set_alloc( void * (*allocator)(size_t size) );
+bool arena_set_alloc( void * (*allocator)(size_t size) );
 
 // Set the free-like deallocator for internal use
-void arena_set_dealloc( void (*deallocator)(void *));
+bool arena_set_dealloc( void (*deallocator)(void *));
 
 // Set the default alignment to be used in arena_alloc.
 // Must be a power of 2.
 //
 // As is, this typically is the word alignment of your
 // system.
-void arena_set_default_alignment(unsigned int align);
+bool arena_set_default_alignment(unsigned int align);
 
 
 // Actual utility functions

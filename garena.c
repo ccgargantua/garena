@@ -213,29 +213,6 @@
 
 
 
-#ifdef GARENA_DEBUG
-
-    #include <stdio.h>
-
-    #define assert(exp, msg) \
-    do { \
-            if ( EXPECT_FALSE_(!(exp)) ) { \
-            fprintf( \
-                stderr, \
-                "FAILED ASSERTION (%s) -> (%d) :\n    `%s` at %s:%d\n", \
-                #exp, !!(exp), msg, __FILE__, __LINE__); \
-            exit(1); \
-        } \
-    } while(0)
-
-#else
-
-    #define assert(exp, msg) ((void)(0))
-
-#endif
-
-
-
 // Primarily used for assertions of bounds
 ALWAYS_INLINE_
 static inline ptrdiff_t ptr_diff(void *p1, void *p2)
@@ -250,17 +227,19 @@ static void * (*alloc)(size_t size) = malloc;
 static void (*dealloc)(void *)      = free;
 
 
-void garena_set_alloc( void * (*allocator)(size_t size) )
+bool garena_set_alloc( void * (*allocator)(size_t size) )
 {
-    assert(allocator, "Allocator provided is NULL");
+    if (!allocator) return false;
     alloc = allocator;
+    return true;
 }
 
 
-void garena_set_dealloc( void (*deallocator)(void *))
+bool garena_set_dealloc( void (*deallocator)(void *))
 {
-    assert(deallocator, "Deallocator is NULL");
+    if (!deallocator) return false;
     dealloc = deallocator;
+    return true;
 }
 
 
@@ -268,24 +247,22 @@ void garena_set_dealloc( void (*deallocator)(void *))
 // this should typically be platform's word alignment
 static unsigned int default_alignment = alignof(max_align_t);
 
-void garena_set_default_alignment(unsigned int align)
+bool garena_set_default_alignment(unsigned int align)
 {
-    assert(
-        align && (align & (align - 1)) == 0,
-        "Provided alignment is not power of 2");
+    if (align && (align & (align - 1))) return false;
     default_alignment = align;
+    return true;
 }
 
 
 Arena *arena_create(size_t size)
 {
-    assert(size > 0, "Provided size is not > 0");
-
+    if (size <= 0) return nullptr;
     Arena *arena = alloc(sizeof(Arena));
-    assert(arena, "Arean object allocation failed.");
+    if (!arena) return nullptr;
 
     arena->begin = alloc(size);
-    assert(arena->begin, "Arena region allocation failed.");
+    if (!(arena->begin)) return nullptr;
 
     arena->end = arena->begin + size;
 
@@ -295,7 +272,7 @@ Arena *arena_create(size_t size)
 
 void *arena_alloc(Arena *arena, size_t num, size_t size)
 {
-    assert(arena, "Provided arena is null");
+    if (!arena) return nullptr;
 
     unsigned int align = default_alignment;
     if      (size == sizeof(bool))      align = alignof(bool);
@@ -313,22 +290,20 @@ void *arena_alloc(Arena *arena, size_t num, size_t size)
 
 void *arena_alloc_aligned(Arena *arena, size_t num, size_t size, unsigned int align)
 {
-    assert(arena, "Provided arena is null");
-    assert(
-        align && (align & (align - 1)) == 0,
-        "Provided alignment is not power of 2");
+    if (!arena) return nullptr;
+    if (align && (align & (align - 1))) return nullptr;
 
     #ifndef GARENA_DEBUG
-    __attribute__((unused))
+        __attribute__((unused))
     #endif
-        ptrdiff_t available = ptr_diff(arena->end, arena->begin);
+    ptrdiff_t available = ptr_diff(arena->end, arena->begin);
 
-    assert(available >= 0, "Not enough space in arena.");
+    if (available <= 0) return nullptr;
 
     ptrdiff_t padding   = (ptrdiff_t)arena->end & (align - 1);
 
-    assert((size * num) <= PTRDIFF_MAX, "Allocation size results in overflow.");
-    assert((ptrdiff_t)(size * num) <= available - padding, "Not enough space in arena.");
+    if ((size * num) > PTRDIFF_MAX) return nullptr;
+    if ((ptrdiff_t)(size * num) > available - padding) return nullptr;
 
     arena->end -= (ptrdiff_t)(size * num) + padding;
     return arena->end;
@@ -337,7 +312,7 @@ void *arena_alloc_aligned(Arena *arena, size_t num, size_t size, unsigned int al
 
 void arena_destroy(Arena *arena)
 {
-    assert(arena, "Provided arena is null");
+    if (!arena) return;
     dealloc(arena->begin);
     dealloc(arena);
 }
