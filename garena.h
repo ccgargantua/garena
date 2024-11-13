@@ -218,7 +218,7 @@ bool arena_set_dealloc( void (*deallocator)(void *));
 //
 // As is, this typically is the word alignment of your
 // system.
-bool arena_set_default_alignment(unsigned int align);
+bool garena_set_default_alignment(unsigned int align);
 
 
 // Actual utility functions
