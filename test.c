@@ -72,6 +72,45 @@ void test_arena_alloc_aligned()
 
     TEST_EQUAL(alloc2, alloc1 - expected_offset);
 
+
+    arena_destroy(arena);
+}
+
+
+void test_failures()
+{
+    TEST_FALSE(garena_set_default_alignment(3));
+    TEST_NULL(arena_create(0));
+    TEST_NULL(arena_alloc(NULL, 0, 0));
+    TEST_NULL(arena_alloc_aligned(NULL, 0, 0, 0));
+
+    constexpr size_t arena_size = 10;
+
+    Arena *arena = arena_create(arena_size);
+    char *end = arena->end;
+
+
+    TEST_NULL(arena_alloc_aligned(arena, 0, 0, 3));
+
+
+    arena_alloc(arena, arena_size, 1);
+
+
+    TEST_NULL(arena_alloc(arena, 1, 1));
+
+
+    arena->end = end;
+
+
+    TEST_NULL(arena_alloc(arena, (size_t)PTRDIFF_MAX + 1, 1));
+    TEST_NULL(arena_alloc(arena, arena_size + 1, 1));
+
+    TEST_NULL(arena_alloc_aligned(arena, 0, 0, 3));
+    TEST_NULL(arena_alloc_aligned(arena, (size_t)PTRDIFF_MAX + 1, 1, 0));
+    TEST_NULL(arena_alloc_aligned(arena, arena_size + 1, 1, 0));
+
+
+
     arena_destroy(arena);
 }
 
@@ -81,6 +120,7 @@ int main()
     SUITE(test_arena_create);
     SUITE(test_arena_alloc);
     SUITE(test_arena_alloc_aligned);
+    SUITE(test_failures);
     WRAP_UP();
     return 0;
 }

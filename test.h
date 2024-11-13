@@ -66,6 +66,8 @@ int buffer_index = 0;
 #define TEST_NULL(a)                TEST(a == NULL,         #a " is not NULL")
 #define TEST_NOT_NULL(a)            TEST(a != NULL,         #a " is NULL")
 #define TEST_EQUAL(a, b)            TEST(a == b,            #a " does not equal " #b)
+#define TEST_TRUE(a)                TEST(a,                 #a " is not true")
+#define TEST_FALSE(a)               TEST(!a,                #a " is not true")
 
 
 #define TEST_ARRAY_EQUAL(a, b, s)                 \
